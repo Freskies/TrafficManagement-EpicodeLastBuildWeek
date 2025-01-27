@@ -24,3 +24,26 @@ public class Main {
 
 	}
 }
+
+
+
+
+/*
+	MAIN MENU
+	1. log in as user [USER MENU]
+	2. log in as admin [ADMIN MENU]
+	0. exit
+
+	USER MENU
+	1. dispencer [DISPENCER MENU]
+	1.x> select dispencer
+
+	DISPENCER MENU
+	1. buy ticket
+	1.> ticket_id
+	2. compile card | renew card | null
+	3 (card exist) (no subscription). buy subscription
+	3.1 weekly / monthly
+
+	ADMIN MENU
+ */

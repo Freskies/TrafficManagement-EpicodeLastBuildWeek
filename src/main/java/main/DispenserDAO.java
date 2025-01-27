@@ -1,13 +1,12 @@
 package main;
 
 import dao.DAO;
-import database.Card;
 import database.Dispenser;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
-public class DispenserDAO extends DAO <Dispenser, Long> {
+public class DispenserDAO extends DAO<Dispenser, Long> {
 
 	public DispenserDAO (EntityManager entityManager) {
 		super(entityManager);
