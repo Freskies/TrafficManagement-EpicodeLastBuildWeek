@@ -2,16 +2,11 @@ package Utils;
 
 import static Utils.Utils.*;
 
-import com.github.javafaker.Faker;
-
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Logger {
 
-	private int columnWidth; // Larghezza della colonna
-	private int headerFrequency; // Frequenza di ristampa dell'header
+	public static void log(Object obj) {
 
 	// Costruttore con valori predefiniti
 	public Logger() {
@@ -35,87 +30,32 @@ public class Logger {
 		StringBuilder row = new StringBuilder();
 		Field[] fields = obj.getClass().getDeclaredFields();
 
+		StringBuilder header = new StringBuilder();
+		StringBuilder separator = new StringBuilder();
+		StringBuilder row = new StringBuilder();
+
 		for (Field field : fields) {
 			try {
 				field.setAccessible(true);
+				String fieldName = field.getName();
 				Object fieldValue = field.get(obj);
-				row.append(String.format(" %-" + columnWidth + "s |",
-					_T(fieldValue != null ? fieldValue.toString() : "null", columnWidth)));
+
+				// Formatta l'intestazione
+				header.append(String.format(" %-20s |", _T(fieldName, 20)));
+
+				// Formatta il separatore
+				separator.append("-".repeat(22)).append("+");
+
+				// Formatta la riga dei valori
+				row.append(String.format(" %-20s |", _T(fieldValue != null ? fieldValue.toString() : "null", 20)));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
-
-		return row.toString();
-	}
-
-	/**
-	 * Metodo per costruire l'header e il separatore.
-	 *
-	 * @param clazz La classe dell'oggetto.
-	 * @return Un array contenente l'header e il separatore.
-	 */
-	private String[] buildHeaderAndSeparator(Class<?> clazz) {
-		StringBuilder header = new StringBuilder();
-		StringBuilder separator = new StringBuilder();
-		Field[] fields = clazz.getDeclaredFields();
-
-		for (Field field : fields) {
-			String fieldName = field.getName();
-			header.append(String.format(" %-" + columnWidth + "s |", _T(fieldName, columnWidth)));
-			separator.append("-".repeat(columnWidth + 2)).append("+");
-		}
-
-		return new String[] { header.toString(), separator.toString() };
-	}
-
-	/**
-	 * Metodo per stampare una lista di oggetti.
-	 *
-	 * @param list La lista di oggetti da stampare.
-	 */
-	public void log(List<?> list) {
-		if (list == null || list.isEmpty()) {
-			_W("La lista è vuota o nulla.");
-			return;
-		}
-
-		int recordCount = 0;
-		String[] headerAndSeparator = null;
-
-		for (Object obj : list) {
-			// Stampa l'header e il separatore all'inizio e ogni N record
-			if (headerAndSeparator == null || recordCount % headerFrequency == 0) {
-				if (recordCount > 0) {
-					_W(""); // Aggiunge una riga vuota tra i blocchi
-				}
-				headerAndSeparator = buildHeaderAndSeparator(obj.getClass());
-				_W(headerAndSeparator[0]); // Stampa l'header
-				_W(headerAndSeparator[1]); // Stampa il separatore
-			}
-
-			// Stampa la riga dei valori
-			_W(formatRow(obj));
-			recordCount++;
-		}
 	}
 
 	public static void main(String[] args) {
-		// Inizializza Faker
-		Faker faker = new Faker();
-
-		// Crea una lista di 50 libri
-		List<Book> bookList = new ArrayList<>();
-		for (int i = 0; i < 50; i++) {
-			String title = faker.book().title();
-			String author = faker.book().author();
-			String genre = faker.book().genre();
-			int year = faker.number().numberBetween(1500, 2023);
-			bookList.add(new Book(title, author, genre, year));
-		}
-
-		// Creazione di un Logger
-		Logger logger = new Logger(25, 10);
-		logger.log(bookList);
+		Book book = new Book("Il Signore degli Anelli", "J.R.R. Tolkien", "Fantasy", 1954);
+		Logger.log(book);
 	}
 }
