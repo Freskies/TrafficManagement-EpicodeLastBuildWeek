@@ -15,8 +15,9 @@ public class Ticket {
 	@Column (name = "release_date")
 	private LocalDate releaseDate;
 
-	@Column (name = "obliterate_date")
-	private LocalDate obliterateDate;
+	@ManyToOne
+	@JoinColumn (name = "use_route_id")
+	private UseRoute usedRoute;
 
 	@ManyToOne
 	@JoinColumn (name = "dispenser_id")
@@ -38,20 +39,20 @@ public class Ticket {
 		this.releaseDate = releaseDate;
 	}
 
-	public LocalDate getObliterateDate () {
-		return this.obliterateDate;
-	}
-
-	public void setObliterateDate (LocalDate obliterateDate) {
-		this.obliterateDate = obliterateDate;
-	}
-
 	public Dispenser getDispenser () {
 		return this.dispenser;
 	}
 
 	public void setDispenser (Dispenser dispenser) {
 		this.dispenser = dispenser;
+	}
+
+	public UseRoute getUsedRoute () {
+		return this.usedRoute;
+	}
+
+	public void setUsedRoute (UseRoute usedRoute) {
+		this.usedRoute = usedRoute;
 	}
 
 	public Ticket () {
@@ -62,9 +63,9 @@ public class Ticket {
 		this.setDispenser(dispenser);
 	}
 
-	public Ticket (LocalDate releaseDate, LocalDate obliterateDate, Dispenser dispenser) {
+	public Ticket (LocalDate releaseDate, Dispenser dispenser, UseRoute usedRoute) {
 		this.setReleaseDate(releaseDate);
-		this.setObliterateDate(obliterateDate);
+		this.setUsedRoute(usedRoute);
 		this.setDispenser(dispenser);
 	}
 
@@ -73,7 +74,6 @@ public class Ticket {
 		if (!(o instanceof Ticket ticket)) return false;
 		return this.getTicketId() == ticket.getTicketId() &&
 			Objects.equals(this.getReleaseDate(), ticket.getReleaseDate()) &&
-			Objects.equals(this.getObliterateDate(), ticket.getObliterateDate()) &&
 			Objects.equals(this.getDispenser(), ticket.getDispenser());
 	}
 
@@ -82,7 +82,6 @@ public class Ticket {
 		return Objects.hash(
 			this.getTicketId(),
 			this.getReleaseDate(),
-			this.getObliterateDate(),
 			this.getDispenser()
 		);
 	}
@@ -92,7 +91,6 @@ public class Ticket {
 		return "Ticket{" +
 			"ticketId=" + this.getTicketId() +
 			", releaseDate=" + this.getReleaseDate() +
-			", obliterateDate=" + this.getObliterateDate() +
 			", dispenser=" + this.getDispenser() +
 			'}';
 	}

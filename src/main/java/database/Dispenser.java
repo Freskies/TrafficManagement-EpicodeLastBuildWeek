@@ -73,6 +73,10 @@ public class Dispenser {
 		this.setStatus(status);
 	}
 
+	public boolean isActive () {
+		return this.getStatus() == DispenserStatus.ACTIVE;
+	}
+
 	@Override
 	public boolean equals (Object o) {
 		if (!(o instanceof Dispenser dispenser)) return false;

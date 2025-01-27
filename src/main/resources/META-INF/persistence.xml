@@ -1,9 +1,17 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
 	<persistence-unit name="TrafficManagementPU">
+		<class>database.Card</class>
+		<class>database.Dispenser</class>
+		<class>database.Maintenance</class>
+		<class>database.MeansOfTransport</class>
+		<class>database.Route</class>
+		<class>database.Subscription</class>
+		<class>database.Ticket</class>
+		<class>database.UseRoute</class>
 
 		<properties>
 			<property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-			<property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/library"/>
+			<property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/trafficManagement"/>
 			<property name="jakarta.persistence.jdbc.user" value="postgres"/>
 			<property name="jakarta.persistence.jdbc.password" value="90160"/>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

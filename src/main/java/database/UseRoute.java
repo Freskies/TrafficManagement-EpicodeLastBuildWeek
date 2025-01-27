@@ -2,6 +2,7 @@ package database;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,9 @@ public class UseRoute {
 
 	@Column (name = "real_travel_time")
 	private String realTravelTime;
+
+	@Column (name = "date")
+	private LocalDate date;
 
 	public int getUseRouteId () {
 		return this.useRouteId;
@@ -54,13 +58,23 @@ public class UseRoute {
 		this.realTravelTime = realTravelTime;
 	}
 
-	public UseRoute () {
+	public LocalDate getDate () {
+		return this.date;
 	}
 
-	public UseRoute (MeansOfTransport meansOfTransport, Route route, String realTravelTime) {
+	public void setDate (LocalDate date) {
+		this.date = date;
+	}
+
+	public UseRoute () {
+
+	}
+
+	public UseRoute (MeansOfTransport meansOfTransport, Route route, String realTravelTime, LocalDate date) {
 		this.setMeansOfTransport(meansOfTransport);
 		this.setRoute(route);
 		this.setRealTravelTime(realTravelTime);
+		this.setDate(date);
 	}
 
 	@Override
@@ -69,7 +83,8 @@ public class UseRoute {
 		return this.getUseRouteId() == useRoute.getUseRouteId() &&
 			Objects.equals(this.getMeansOfTransport(), useRoute.getMeansOfTransport()) &&
 			Objects.equals(this.getRoute(), useRoute.getRoute()) &&
-			Objects.equals(this.getRealTravelTime(), useRoute.getRealTravelTime());
+			Objects.equals(this.getRealTravelTime(), useRoute.getRealTravelTime()) &&
+			Objects.equals(this.getDate(), useRoute.getDate());
 	}
 
 	@Override
@@ -78,7 +93,8 @@ public class UseRoute {
 			this.getUseRouteId(),
 			this.getMeansOfTransport(),
 			this.getRoute(),
-			this.getRealTravelTime()
+			this.getRealTravelTime(),
+			this.getDate()
 		);
 	}
 
@@ -89,6 +105,7 @@ public class UseRoute {
 			", meansOfTransport=" + this.getMeansOfTransport() +
 			", route=" + this.getRoute() +
 			", realTravelTime='" + this.getRealTravelTime() + '\'' +
+			", date=" + this.getDate() +
 			'}';
 	}
 }

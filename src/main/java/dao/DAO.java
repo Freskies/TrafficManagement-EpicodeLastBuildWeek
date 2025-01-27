@@ -2,6 +2,7 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 
+import java.io.Serializable;
 import java.util.List;
 
 public abstract class DAO<T, IdType> {

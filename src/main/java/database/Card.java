@@ -18,6 +18,10 @@ public class Card {
 	@Column (name = "release_date")
 	private LocalDate releaseDate;
 
+	@ManyToOne
+	@JoinColumn (name = "dispenser_id")
+	private Dispenser dispenser;
+
 	public int getCardId () {
 		return this.cardId;
 	}
@@ -42,12 +46,25 @@ public class Card {
 		this.releaseDate = releaseDate;
 	}
 
+	public Dispenser getDispenser () {
+		return this.dispenser;
+	}
+
+	public void setDispenser (Dispenser dispenser) {
+		this.dispenser = dispenser;
+	}
+
 	public Card () {
 	}
 
-	public Card (String owner, LocalDate date) {
+	public Card (String owner, LocalDate date, Dispenser dispenser) {
 		this.setOwnerFullName(owner);
 		this.setReleaseDate(date);
+		this.setDispenser(dispenser);
+	}
+
+	public boolean isActive () {
+		return this.getReleaseDate().isAfter(LocalDate.now().minusYears(1));
 	}
 
 	@Override

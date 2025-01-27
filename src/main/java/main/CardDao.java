@@ -26,4 +26,16 @@ public class CardDao extends DAO<Card, Long> {
 	public List<Card> findAll () {
 		return super.findAll(Card.class);
 	}
+
+	public Card getLastCard (String owner) {
+		this.entityManager.getTransaction().begin();
+		List<Card> cards = this.entityManager.createQuery("""
+			SELECT c FROM Card c
+			WHERE c.ownerFullName = :owner
+			ORDER BY c.releaseDate DESC
+			""", Card.class
+		).setParameter("owner", owner).getResultList();
+		this.entityManager.getTransaction().commit();
+		return cards.getFirst();
+	}
 }

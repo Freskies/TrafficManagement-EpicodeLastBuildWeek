@@ -26,4 +26,8 @@ public class DispenserDAO extends DAO<Dispenser, Long> {
 	public List<Dispenser> findAll () {
 		return super.findAll(Dispenser.class);
 	}
+
+	public List<Dispenser> findAllActive () {
+		return this.findAll().stream().filter(Dispenser::isActive).toList();
+	}
 }
