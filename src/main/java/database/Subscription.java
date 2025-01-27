@@ -77,6 +77,14 @@ public class Subscription {
 		this.setDuration(duration);
 	}
 
+	public boolean isActive() {
+		int days = switch (this.getDuration()) {
+			case SubscriptionDuration.WEEKLY -> 7;
+			case SubscriptionDuration.MONTHLY -> 30;
+		};
+		return LocalDate.now().isBefore(this.getReleaseDate().plusDays(days));
+	}
+
 	@Override
 	public boolean equals (Object o) {
 		if (!(o instanceof Subscription that)) return false;

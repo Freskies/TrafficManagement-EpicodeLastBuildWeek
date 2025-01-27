@@ -14,7 +14,7 @@ CREATE TABLE cards
     card_id         SERIAL PRIMARY KEY,
     owner_full_name VARCHAR(50) NOT NULL,
     release_date    DATE        NOT NULL,
-    dispencer_id    INT references dispensers (dispenser_id)
+    dispenser_id    INT references dispensers (dispenser_id)
 );
 
 CREATE TABLE subscriptions
@@ -91,7 +91,7 @@ VALUES ('Central Station', 'ACTIVE'),
        ('Countryside', 'ACTIVE'),
        ('Metro Station', 'INACTIVE');
 
-INSERT INTO cards (owner_full_name, release_date, dispencer_id)
+INSERT INTO cards (owner_full_name, release_date, dispenser_id)
 VALUES ('John Doe', '2023-04-01', 1),
        ('Jane Doe', '2023-04-02', 2),
        ('Alice Smith', '2023-04-15', 3),
