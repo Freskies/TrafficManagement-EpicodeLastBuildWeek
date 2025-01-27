@@ -5,6 +5,7 @@ import database.Card;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class CardDao extends DAO<Card, Long> {
 
@@ -36,6 +37,11 @@ public class CardDao extends DAO<Card, Long> {
 			""", Card.class
 		).setParameter("owner", owner).getResultList();
 		this.entityManager.getTransaction().commit();
-		return cards.getFirst();
+
+		try {
+			return cards.getFirst();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 }

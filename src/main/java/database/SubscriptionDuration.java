@@ -1,13 +1,13 @@
 package database;
 
 public enum SubscriptionDuration {
-	MONTHLY, YEARLY;
+	WEEKLY, MONTHLY;
 
 	@Override
 	public String toString () {
 		return switch (this) {
+			case WEEKLY -> "Weekly";
 			case MONTHLY -> "Monthly";
-			case YEARLY -> "Yearly";
 		};
 	}
 }

@@ -2,16 +2,12 @@ package database;
 
 import jakarta.persistence.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table (name = "dispensers")
-public class Dispenser implements Serializable {
-	@Serial
-	private static final long serialVersionUID = 1L;
+public class Dispenser {
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)

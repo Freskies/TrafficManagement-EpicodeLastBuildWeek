@@ -54,8 +54,8 @@ public class Main {
 			this.ticketDAO = new TicketDAO(entityManager);
 			this.useRouteDAO = new UseRouteDAO(entityManager);
 
-			//Logger logger = new Logger();
-			//logger.log(this.dispenserDAO.findAll());
+			Logger logger = new Logger();
+			logger.log(this.dispenserDAO.findAll());
 
 			this.mainMenu();
 		} finally {
@@ -67,8 +67,8 @@ public class Main {
 
 	public void mainMenu () {
 		System.out.print("""
-			1. log in as user [USER MENU]
-			2. log in as admin [ADMIN MENU]
+			1. log in as user
+			2. log in as admin
 			0. exit
 			->\s""");
 
@@ -151,14 +151,14 @@ public class Main {
 			DISPENCER %s
 			1. buy ticket
 			2. compile card
-			3. check subscription
+			3. buy subscription
 			0. back
 			->\s""", dispenser.getLocation());
 
 		switch (this.scan()) {
 			case "1" -> this.buyTicket(dispenser);
 			case "2" -> this.compileCard(dispenser);
-			case "3" -> this.checkSubscription();
+			case "3" -> this.buySubscription(dispenser);
 			case "0" -> this.userMenu();
 			default -> {
 				System.out.println("Invalid input");
@@ -176,6 +176,7 @@ public class Main {
 
 	public void compileCard (Dispenser dispenser) {
 		Card lastCard = this.cardDao.getLastCard(this.getUsername());
+
 		if (lastCard == null) {
 			Card card = new Card(this.getUsername(), LocalDate.now(), dispenser);
 			this.cardDao.save(card);
@@ -191,10 +192,55 @@ public class Main {
 		this.dispencerMenu(dispenser);
 	}
 
-	public void checkSubscription () {
+	public void buySubscription (Dispenser dispenser) {
+		if (this.cardDao.getLastCard(this.getUsername()) == null) {
+			System.out.println("You need a card to buy a subscription");
+			this.userMenu();
+		}
+		if (this.subscriptionDAO.hasSubscription(this.getUsername())) {
+			System.out.println("You already have a subscription!");
+			this.userMenu();
+		}
+		else {
+			System.out.print("""
+				1. weekly
+				2. monthly
+				0. cancel
+				->\s""");
 
+			Card card = this.cardDao.getLastCard(this.getUsername());
+
+			switch (this.scan()) {
+				case "1" -> {
+					Subscription subscription = new Subscription(
+						card,
+						dispenser,
+						LocalDate.now(),
+						SubscriptionDuration.WEEKLY
+					);
+					this.subscriptionDAO.save(subscription);
+					System.out.println("Weekly subscription purchased successfully!");
+				}
+				case "2" -> {
+					Subscription subscription = new Subscription(
+						card,
+						dispenser,
+						LocalDate.now(),
+						SubscriptionDuration.MONTHLY
+					);
+					this.subscriptionDAO.save(subscription);
+					System.out.println("Monthly subscription purchased successfully!");
+				}
+				case "0" -> this.dispencerMenu(dispenser);
+				default -> {
+					System.out.println("Invalid input");
+					this.buySubscription(dispenser);
+				}
+			}
+		}
+
+		this.dispencerMenu(dispenser);
 	}
-
 
 	// TRANSPORT
 
