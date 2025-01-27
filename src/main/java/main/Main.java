@@ -92,7 +92,7 @@ public class Main {
 	// USER MENU
 
 	public void selectUser () {
-		System.out.println("Insert your name: ");
+		System.out.print("Insert your name: ");
 		try {
 			this.setUsername(this.scan());
 		} catch (IllegalArgumentException e) {
@@ -176,19 +176,19 @@ public class Main {
 
 	public void compileCard (Dispenser dispenser) {
 		Card lastCard = this.cardDao.getLastCard(this.getUsername());
-		switch (true) {
-			case lastCard == null -> {
-				Card card = new Card(this.getUsername(), LocalDate.now(), dispenser);
-				this.cardDao.save(card);
-				System.out.printf("Card compiled successfully: %s\n", card.getCardId());
-				this.dispencerMenu(dispenser);
-			}
+		if (lastCard == null) {
+			Card card = new Card(this.getUsername(), LocalDate.now(), dispenser);
+			this.cardDao.save(card);
+			System.out.printf("Card compiled successfully: %s\n", card.getCardId());
 		}
-		if (lastCard.isActive()) {
+		else if (lastCard.isActive())
 			System.out.println("Card is already active! Is active from " + lastCard.getReleaseDate());
-			this.dispencerMenu(dispenser);
+		else {
+			Card card = new Card(this.getUsername(), LocalDate.now(), dispenser);
+			this.cardDao.save(card);
+			System.out.println("Card renewed successfully!");
 		}
-
+		this.dispencerMenu(dispenser);
 	}
 
 	public void checkSubscription () {
