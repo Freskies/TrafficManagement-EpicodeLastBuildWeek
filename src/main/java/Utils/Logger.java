@@ -2,7 +2,7 @@ package Utils;
 
 import static Utils.Utils.*;
 
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -12,15 +12,26 @@ public class Logger {
 	private int headerFrequency; // Frequenza di ristampa dell'header
 
 	// Costruttore con valori predefiniti
-	public Logger () {
+	public Logger() {
 		this.columnWidth = 20; // Larghezza predefinita della colonna
 		this.headerFrequency = 50; // Frequenza predefinita di ristampa dell'header
 	}
 
 	// Costruttore personalizzato
-	public Logger (int columnWidth, int headerFrequency) {
+	public Logger(int columnWidth, int headerFrequency) {
 		this.columnWidth = columnWidth;
 		this.headerFrequency = headerFrequency;
+	}
+
+	/**
+	 * Metodo per ottenere un'annotazione specifica su un campo.
+	 *
+	 * @param field           Il campo da verificare.
+	 * @param annotationClass La classe dell'annotazione da cercare.
+	 * @return L'annotazione se presente, null altrimenti.
+	 */
+	private <A extends Annotation> A isAnnotated(Field field, Class<A> annotationClass) {
+		return field.isAnnotationPresent(annotationClass) ? field.getAnnotation(annotationClass) : null;
 	}
 
 	/**
@@ -29,16 +40,25 @@ public class Logger {
 	 * @param obj L'oggetto da formattare.
 	 * @return La riga formattata.
 	 */
-	private String formatRow (Object obj) {
+	private String formatRow(Object obj) {
 		StringBuilder row = new StringBuilder();
 		Field[] fields = obj.getClass().getDeclaredFields();
 
 		for (Field field : fields) {
 			try {
 				field.setAccessible(true);
+
+				// Salta i campi annotati con relazioni Hibernate (@OneToMany, @ManyToOne, ecc.)
+				if (isAnnotated(field, jakarta.persistence.OneToMany.class) != null
+						|| isAnnotated(field, jakarta.persistence.ManyToOne.class) != null
+						|| isAnnotated(field, jakarta.persistence.OneToOne.class) != null
+						|| isAnnotated(field, jakarta.persistence.ManyToMany.class) != null) {
+					continue;
+				}
+
 				Object fieldValue = field.get(obj);
 				row.append(String.format(" %-" + columnWidth + "s |",
-					_T(fieldValue != null ? fieldValue.toString() : "null", columnWidth)));
+						_T(fieldValue != null ? fieldValue.toString() : "null", columnWidth)));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -53,18 +73,26 @@ public class Logger {
 	 * @param clazz La classe dell'oggetto.
 	 * @return Un array contenente l'header e il separatore.
 	 */
-	private String[] buildHeaderAndSeparator (Class<?> clazz) {
+	private String[] buildHeaderAndSeparator(Class<?> clazz) {
 		StringBuilder header = new StringBuilder();
 		StringBuilder separator = new StringBuilder();
 		Field[] fields = clazz.getDeclaredFields();
 
 		for (Field field : fields) {
+			// Salta i campi annotati con relazioni Hibernate (@OneToMany, @ManyToOne, ecc.)
+			if (isAnnotated(field, jakarta.persistence.OneToMany.class) != null
+					|| isAnnotated(field, jakarta.persistence.ManyToOne.class) != null
+					|| isAnnotated(field, jakarta.persistence.OneToOne.class) != null
+					|| isAnnotated(field, jakarta.persistence.ManyToMany.class) != null) {
+				continue;
+			}
+
 			String fieldName = field.getName();
 			header.append(String.format(" %-" + columnWidth + "s |", _T(fieldName, columnWidth)));
 			separator.append("-".repeat(columnWidth + 2)).append("+");
 		}
 
-		return new String[] {header.toString(), separator.toString()};
+		return new String[] { header.toString(), separator.toString() };
 	}
 
 	/**
@@ -72,7 +100,7 @@ public class Logger {
 	 *
 	 * @param list La lista di oggetti da stampare.
 	 */
-	public void log (List<?> list) {
+	public void log(List<?> list) {
 		if (list == null || list.isEmpty()) {
 			_W("La lista è vuota o nulla.");
 			return;
