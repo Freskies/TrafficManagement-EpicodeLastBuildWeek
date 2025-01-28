@@ -3,18 +3,25 @@ package database;
 import Utils.Logger;
 import java.time.LocalDate;
 import java.util.List;
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import dao.EntityManagerUtil;
+
+import database.TicketStatistics;
 
 public class TicketStatisticsDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+
+    // Costruttore per accettare un EntityManager
+    public TicketStatisticsDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Transactional
     public List<TicketStatistics> getTicketStatistics(LocalDate startDate, LocalDate endDate) {
         String hql = """
-                    SELECT new com.example.statistics.TicketStatistics(
+                    SELECT TicketStatistics(
                         t.releaseDate,
                         COUNT(t.releaseDate)
                     )
@@ -37,13 +44,26 @@ public class TicketStatisticsDAO {
     }
 
     public static void main(String[] args) {
-        TicketStatisticsDAO dao = new TicketStatisticsDAO();
+        // Creazione di EntityManager e gestione risorse
+        try (EntityManager entityManager = EntityManagerUtil.getEntityManager()) {
+            // Creazione del DAO
+            TicketStatisticsDAO ticketStatisticsDAO = new TicketStatisticsDAO(entityManager);
 
-        LocalDate startDate = LocalDate.of(2023, 5, 1);
-        LocalDate endDate = LocalDate.of(2024, 1, 1);
+            // Date di esempio
+            LocalDate startDate = LocalDate.of(2023, 5, 1);
+            LocalDate endDate = LocalDate.of(2024, 1, 1);
 
-        Logger stats = new Logger();
-        List<TicketStatistics> statistics = dao.getTicketStatistics(startDate, endDate);
-        stats.log(statistics);
+            // Esecuzione della query e log dei risultati
+            List<TicketStatistics> statistics = ticketStatisticsDAO.getTicketStatistics(startDate, endDate);
+
+            Logger stats = new Logger();
+            stats.log(statistics);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Chiusura del factory
+            EntityManagerUtil.closeEntityManagerFactory();
+        }
     }
 }
