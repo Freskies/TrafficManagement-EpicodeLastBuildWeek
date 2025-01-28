@@ -1,7 +1,6 @@
 package main;
 
 import dao.DAO;
-import database.MeansOfTransport;
 import database.Ticket;
 import jakarta.persistence.EntityManager;
 
