@@ -120,9 +120,6 @@ public class Logger {
 				_W(headerAndSeparator[0]); // Stampa l'header
 				_W(headerAndSeparator[1]); // Stampa il separatore
 			}
-
-			// Chiude la tabella e torna a capo
-			_W(headerAndSeparator[1] + "\n");
 			// Stampa la riga dei valori
 			_W(formatRow(obj));
 			recordCount++;

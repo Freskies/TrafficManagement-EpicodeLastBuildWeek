@@ -21,7 +21,7 @@ public class TicketStatisticsDAO {
     @Transactional
     public List<TicketStatistics> getTicketStatistics(LocalDate startDate, LocalDate endDate) {
         String hql = """
-                    SELECT TicketStatistics(
+                    SELECT new database.TicketStatistics(
                         t.releaseDate,
                         COUNT(t.releaseDate)
                     )
