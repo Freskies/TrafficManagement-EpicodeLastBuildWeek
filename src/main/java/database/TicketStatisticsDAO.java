@@ -56,7 +56,7 @@ public class TicketStatisticsDAO {
             // Esecuzione della query e log dei risultati
             List<TicketStatistics> statistics = ticketStatisticsDAO.getTicketStatistics(startDate, endDate);
 
-            Logger stats = new Logger();
+            Logger stats = new Logger(10, 20);
             stats.log(statistics);
 
         } catch (Exception e) {
