@@ -69,6 +69,10 @@ public class Ticket {
 		this.setDispenser(dispenser);
 	}
 
+	public boolean isObliterated () {
+		return this.usedRoute != null;
+	}
+
 	@Override
 	public boolean equals (Object o) {
 		if (!(o instanceof Ticket ticket)) return false;

@@ -1,9 +1,11 @@
 package database;
 
+import Utils.Interval;
 import jakarta.persistence.*;
-import org.postgresql.util.PGInterval;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -76,6 +78,14 @@ public class UseRoute {
 		this.setRoute(route);
 		this.setRealTravelTime(realTravelTime);
 		this.setDate(date);
+	}
+
+	public static @NotNull String averageRealTime (@NotNull List<UseRoute> routeList) {
+		return Interval.secondsToTravelTime(
+			routeList.stream()
+				.mapToInt(route -> Interval.travelTimeToSeconds(route.getRealTravelTime()))
+				.sum() / routeList.size()
+		);
 	}
 
 	@Override

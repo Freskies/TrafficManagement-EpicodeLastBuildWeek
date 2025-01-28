@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -81,10 +82,7 @@ public class Main {
 				this.selectUser();
 				this.userMenu();
 			}
-			case "2" -> {
-				this.selectUser();
-				this.adminMenu();
-			}
+			case "2" -> this.adminMenu();
 			case "0" -> System.exit(0);
 			default -> {
 				System.out.println("Invalid input");
@@ -133,6 +131,7 @@ public class Main {
 		dispenserList.forEach(dispenser ->
 			System.out.println(index.incrementAndGet() + ". " + dispenser.getLocation())
 		);
+
 		System.out.print("""
 			0. back
 			->\s""");
@@ -144,7 +143,7 @@ public class Main {
 			int choice = Integer.parseInt(input);
 			Dispenser dispenser = dispenserList.get(choice - 1);
 			this.dispenserMenu(dispenser);
-		} catch (IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException | NumberFormatException e) {
 			System.out.println("Invalid input");
 			this.selectDispenser();
 		}
@@ -361,11 +360,82 @@ public class Main {
 
 	// ADMIN MENU
 
+	@SuppressWarnings ("InfiniteRecursion")
 	public void adminMenu () {
-		/*
-		* 1. n ticket, subscription by time and dispencer
-		* 2. get all ticket by means of transport or time
-		* 3. average real travel time by means of transport and routes
-		* */
+		System.out.print("""
+			ADMIN CONSOLE:
+			1. Get tickets obliterated grouped by date
+			2. Get tickets by dispenser
+			3. Get tickets by means of transport
+			4. Average real travel time for each route
+			0. Back
+			->\s""");
+
+		switch (this.scan()) {
+			case "1" -> this.getTicketsObliteratedGroupedByDate();
+			case "2" -> this.getTicketsByDispenser();
+			case "3" -> this.getTicketsByMeansOfTransport();
+			case "4" -> this.averageTravelTimePerRoute();
+			case "0" -> this.mainMenu();
+			default -> {
+				System.out.println("Invalid input");
+				this.adminMenu();
+			}
+		}
+
+		this.adminMenu();
+	}
+
+	public void getTicketsObliteratedGroupedByDate () {
+		HashMap<LocalDate, List<Ticket>> res = this.ticketDAO.getTicketsByDays(
+			this.scanDate("Insert start date"),
+			this.scanDate("Insert end date")
+		);
+		res.forEach(
+			(date, tickets) -> System.out.println(date + ": " + tickets.size()));
+	}
+
+	public void getTicketsByDispenser () {
+		List<Dispenser> dispenserList = this.dispenserDAO.findAll();
+		for (Dispenser dispenser : dispenserList)
+			if (!dispenser.getTickets().isEmpty())
+				System.out.println(dispenser.getLocation() + ": " + dispenser.getTickets().size());
+	}
+
+	public void getTicketsByMeansOfTransport () {
+		HashMap<MeansOfTransport, List<Ticket>> res = this.ticketDAO.getTicketsByMeansOfTransport();
+		res.forEach(
+			(meansOfTransport, tickets) ->
+				System.out.println(meansOfTransport.getModel() + ": " + tickets.size())
+		);
+	}
+
+	public void averageTravelTimePerRoute () {
+		HashMap<Route, List<UseRoute>> res = this.useRouteDAO.getUsedRoutesByRoute();
+
+		res.forEach(
+			(route, useRoutes) ->
+				System.out.printf("""
+						%s to %s: %s expected but %s on average
+						""",
+					route.getRouteStart(),
+					route.getRouteEnd(),
+					route.getExpectedTravelTime(),
+					UseRoute.averageRealTime(useRoutes)
+				)
+		);
+	}
+
+	// ASK DATE
+
+	public LocalDate scanDate (String ask) {
+		System.out.print(ask + " (yyyy-mm-dd): ");
+		String date = this.scan();
+		try {
+			return LocalDate.parse(date);
+		} catch (Exception e) {
+			System.out.println("Invalid date format");
+			return this.scanDate(ask);
+		}
 	}
 }

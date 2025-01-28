@@ -1,4 +1,4 @@
-package database;
+package statistics;
 
 import Utils.Logger;
 import java.time.LocalDate;
@@ -6,8 +6,6 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import dao.EntityManagerUtil;
-
-import database.TicketStatistics;
 
 public class TicketStatisticsDAO {
 
@@ -38,9 +36,9 @@ public class TicketStatisticsDAO {
                 """;
 
         return entityManager.createQuery(hql, TicketStatistics.class)
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate)
-                .getResultList();
+           .setParameter("startDate", startDate)
+           .setParameter("endDate", endDate)
+           .getResultList();
     }
 
     public static void main(String[] args) {

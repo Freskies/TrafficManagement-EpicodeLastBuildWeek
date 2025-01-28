@@ -1,4 +1,4 @@
-package database;
+package statistics;
 
 import java.time.LocalDate;
 
@@ -31,8 +31,8 @@ public class TicketStatistics {
     @Override
     public String toString() {
         return "TicketStatistics{" +
-                "releaseDate=" + releaseDate +
-                ", count=" + count +
-                '}';
+           "releaseDate=" + releaseDate +
+           ", count=" + count +
+           '}';
     }
 }
