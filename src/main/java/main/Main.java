@@ -1,12 +1,10 @@
 package main;
 
-import Utils.Logger;
 import com.github.javafaker.Faker;
 import dao.EntityManagerUtil;
 import database.*;
 import jakarta.persistence.EntityManager;
 import org.jetbrains.annotations.NotNull;
-import org.postgresql.util.PGInterval;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +33,13 @@ public class Main {
 	public void setUsername (String username) {
 		if (username == null || username.isBlank())
 			throw new IllegalArgumentException("Username cannot be blank");
-		this.username = username;
+		if (username.length() > 50)
+			throw new IllegalArgumentException("Username is too long");
+		if (username.length() < 3)
+			throw new IllegalArgumentException("Username is too short");
+		if (!username.matches("^[a-zA-Z]*$"))
+			throw new IllegalArgumentException("Username can only contain letters");
+		this.username = username.trim();
 	}
 
 	public String scan () {
@@ -56,9 +60,6 @@ public class Main {
 			this.subscriptionDAO = new SubscriptionDAO(entityManager);
 			this.ticketDAO = new TicketDAO(entityManager);
 			this.useRouteDAO = new UseRouteDAO(entityManager);
-
-			//Logger logger = new Logger();
-			//logger.log(this.dispenserDAO.findAll());
 
 			this.mainMenu();
 		} finally {
@@ -195,11 +196,12 @@ public class Main {
 	}
 
 	public void buySubscription (Dispenser dispenser) {
-		if (this.cardDao.getLastCard(this.getUsername()) == null) {
+		Card card = this.cardDao.getLastCard(this.getUsername());
+		if (card == null) {
 			System.out.println("You need a card to buy a subscription");
 			this.dispenserMenu(dispenser);
 		}
-		if (this.subscriptionDAO.hasSubscription(this.getUsername())) {
+		if (this.subscriptionDAO.hasSubscription(card)) {
 			System.out.println("You already have a subscription!");
 			this.dispenserMenu(dispenser);
 		} else {
@@ -208,8 +210,6 @@ public class Main {
 				2. monthly
 				0. cancel
 				->\s""");
-
-			Card card = this.cardDao.getLastCard(this.getUsername());
 
 			switch (this.scan()) {
 				case "1" -> {
@@ -268,29 +268,76 @@ public class Main {
 			int choice = Integer.parseInt(input);
 			MeansOfTransport meansOfTransport = meansOfTransportList.get(choice - 1);
 
-			this.transportMenu(meansOfTransport);
+			this.validateTicket(meansOfTransport);
 		} catch (IndexOutOfBoundsException e) {
 			System.out.println("Invalid input");
 			this.selectMeansOfTransport();
 		}
 	}
 
-	public void transportMenu (@NotNull MeansOfTransport meansOfTransport) {
-		Logger logger = new Logger();
-		logger.log(this.routeDAO.findAll());
+	public void validateTicket (MeansOfTransport meansOfTransport) {
+		Card card = this.cardDao.getLastCard(this.getUsername());
+		if (card != null && this.subscriptionDAO.hasSubscription(card))
+			this.transportMenu(meansOfTransport, null);
+		else
+			this.useTicket(meansOfTransport);
+	}
+
+	public void useTicket (MeansOfTransport meansOfTransport) {
+		try {
+			System.out.print("Insert ticket id (type back to go back): ");
+			String ticketId = this.scan();
+
+			if (ticketId.trim().equalsIgnoreCase("back"))
+				this.selectMeansOfTransport();
+
+			Ticket ticket = this.ticketDAO.getById(Long.parseLong(ticketId));
+
+			if (ticket == null) {
+				System.out.println("Invalid ticket id");
+				this.useTicket(meansOfTransport);
+			} else if (ticket.getUsedRoute() != null) {
+				System.out.println("Ticket already used");
+				this.useTicket(meansOfTransport);
+			} else {
+				System.out.println("Valid ticket!");
+				this.transportMenu(meansOfTransport, ticket);
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid ticket id");
+			this.useTicket(meansOfTransport);
+		}
+
+	}
+
+	public void transportMenu (@NotNull MeansOfTransport meansOfTransport, Ticket ticket) {
 		Route random_route = this.routeDAO.getRandom();
 		if (random_route == null) random_route = this.createRandomRoute();
-		System.out.println("2");
 		UseRoute useRoute = new UseRoute(
 			meansOfTransport,
 			random_route,
 			this.createRandomInterval(),
 			LocalDate.now()
 		);
-		System.out.println("3");
 		this.useRouteDAO.save(useRoute);
-		System.out.println("4");
-		System.out.println(useRoute);
+
+		if (ticket != null) {
+			ticket.setUsedRoute(useRoute);
+			this.ticketDAO.save(ticket);
+		}
+
+		this.printUsedRoute(useRoute);
+		this.userMenu();
+	}
+
+	public void printUsedRoute (@NotNull UseRoute usedRoute) {
+		System.out.printf("""
+				You traveled from %s to %s in %s!
+				""",
+			usedRoute.getRoute().getRouteStart(),
+			usedRoute.getRoute().getRouteEnd(),
+			usedRoute.getRealTravelTime()
+		);
 	}
 
 	public Route createRandomRoute () {
@@ -304,15 +351,11 @@ public class Main {
 		return random_route;
 	}
 
-	public PGInterval createRandomInterval () {
-		Faker faker = new Faker(Locale.ENGLISH);
-		return new PGInterval(
-			0,
-			0,
-			0,
-			faker.random().nextInt(0, 3),
-			faker.random().nextInt(0, 60),
-			faker.random().nextInt(0, 60)
+	public String createRandomInterval () {
+		return "%02d:%02d:%02d".formatted(
+			(int) (Math.random() * 3),
+			(int) (Math.random() * 60),
+			(int) (Math.random() * 60)
 		);
 	}
 
@@ -322,18 +365,3 @@ public class Main {
 
 	}
 }
-
-
-
-
-/*
-	USER MENU
-	2. use means of transport
-	2.x> select means of transport
-	2.x.> check subscription
-	2.x.> insert ticked id
-	2.x.> ciola
-
-	ADMIN MENU
-	1.
- */

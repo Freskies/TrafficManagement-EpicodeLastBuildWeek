@@ -22,7 +22,7 @@ public class UseRoute {
 	private Route route;
 
 	@Column (name = "real_travel_time")
-	private PGInterval realTravelTime;
+	private String realTravelTime;
 
 	@Column (name = "date")
 	private LocalDate date;
@@ -51,11 +51,11 @@ public class UseRoute {
 		this.route = route;
 	}
 
-	public PGInterval getRealTravelTime () {
+	public String getRealTravelTime () {
 		return this.realTravelTime;
 	}
 
-	public void setRealTravelTime (PGInterval realTravelTime) {
+	public void setRealTravelTime (String realTravelTime) {
 		this.realTravelTime = realTravelTime;
 	}
 
@@ -71,7 +71,7 @@ public class UseRoute {
 
 	}
 
-	public UseRoute (MeansOfTransport meansOfTransport, Route route, PGInterval realTravelTime, LocalDate date) {
+	public UseRoute (MeansOfTransport meansOfTransport, Route route, String realTravelTime, LocalDate date) {
 		this.setMeansOfTransport(meansOfTransport);
 		this.setRoute(route);
 		this.setRealTravelTime(realTravelTime);

@@ -21,7 +21,7 @@ public class Route {
 	private String routeEnd;
 
 	@Column (name = "expected_travel_time")
-	private PGInterval expectedTravelTime;
+	private String expectedTravelTime;
 
 	@OneToMany (mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UseRoute> useRoutes;
@@ -50,11 +50,11 @@ public class Route {
 		this.routeEnd = routeEnd;
 	}
 
-	public PGInterval getExpectedTravelTime () {
+	public String getExpectedTravelTime () {
 		return this.expectedTravelTime;
 	}
 
-	public void setExpectedTravelTime (PGInterval expectedTravelTime) {
+	public void setExpectedTravelTime (String expectedTravelTime) {
 		this.expectedTravelTime = expectedTravelTime;
 	}
 
@@ -69,7 +69,7 @@ public class Route {
 	public Route () {
 	}
 
-	public Route (String routeStart, String routeEnd, PGInterval expectedTravelTime) {
+	public Route (String routeStart, String routeEnd, String expectedTravelTime) {
 		this.setRouteStart(routeStart);
 		this.setRouteEnd(routeEnd);
 		this.setExpectedTravelTime(expectedTravelTime);
