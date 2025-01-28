@@ -1,6 +1,7 @@
 package database;
 
 import jakarta.persistence.*;
+import org.postgresql.util.PGInterval;
 
 import java.time.LocalDate;
 import java.util.Objects;

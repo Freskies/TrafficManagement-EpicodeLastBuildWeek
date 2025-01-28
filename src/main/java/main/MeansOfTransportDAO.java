@@ -27,4 +27,21 @@ public class MeansOfTransportDAO extends DAO<MeansOfTransport, Long> {
 	public List<MeansOfTransport> findAll () {
 		return super.findAll(MeansOfTransport.class);
 	}
+
+	@Override
+	public MeansOfTransport getRandom () {
+		return super.getRandom(MeansOfTransport.class);
+	}
+
+	public List<MeansOfTransport> findAllActive () {
+		super.entityManager.getTransaction().begin();
+		List<MeansOfTransport> meansOfTransports = super.entityManager.createQuery("""
+			SELECT mof
+			FROM MeansOfTransport mof, Maintenance m
+			WHERE mof.meansOfTransportId = m.meansOfTransport.meansOfTransportId
+			AND m.endDate < CURRENT_DATE
+			""", MeansOfTransport.class).getResultList();
+		super.entityManager.getTransaction().commit();
+		return meansOfTransports;
+	}
 }

@@ -26,4 +26,9 @@ public class RouteDAO extends DAO<Route, Long> {
 	public List<Route> findAll () {
 		return super.findAll(Route.class);
 	}
+
+	@Override
+	public Route getRandom () {
+		return super.getRandom(Route.class);
+	}
 }

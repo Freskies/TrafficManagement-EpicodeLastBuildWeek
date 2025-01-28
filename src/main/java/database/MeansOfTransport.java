@@ -13,6 +13,7 @@ public class MeansOfTransport {
 	private int meansOfTransportId;
 
 	@Enumerated (EnumType.STRING)
+	@Column (name = "type_of_transport")
 	private TypeOfTransport typeOfTransport;
 
 	@Column (name = "model")

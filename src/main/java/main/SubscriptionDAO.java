@@ -1,6 +1,7 @@
 package main;
 
 import dao.DAO;
+import database.Card;
 import database.Subscription;
 import jakarta.persistence.EntityManager;
 
@@ -28,14 +29,19 @@ public class SubscriptionDAO extends DAO<Subscription, Long> {
 		return super.findAll(Subscription.class);
 	}
 
-	public boolean hasSubscription (String user) {
+	@Override
+	public Subscription getRandom () {
+		return super.getRandom(Subscription.class);
+	}
+
+	public boolean hasSubscription (Card card) {
 		super.entityManager.getTransaction().begin();
 		List<Subscription> subscriptions = super.entityManager.createQuery("""
 				SELECT s FROM Subscription s
-				WHERE s.card.ownerFullName = :username
+				WHERE s.card = :card
 				ORDER BY s.releaseDate DESC""",
 			Subscription.class
-		).setParameter("username", user).getResultList();
+		).setParameter("card", card).getResultList();
 		super.entityManager.getTransaction().commit();
 		try {
 			Subscription lastSubscription = subscriptions.getFirst();

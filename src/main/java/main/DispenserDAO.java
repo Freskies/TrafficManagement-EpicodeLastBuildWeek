@@ -27,6 +27,11 @@ public class DispenserDAO extends DAO<Dispenser, Long> {
 		return super.findAll(Dispenser.class);
 	}
 
+	@Override
+	public Dispenser getRandom () {
+		return super.getRandom(Dispenser.class);
+	}
+
 	public List<Dispenser> findAllActive () {
 		return this.findAll().stream().filter(Dispenser::isActive).toList();
 	}

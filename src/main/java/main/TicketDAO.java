@@ -26,4 +26,9 @@ public class TicketDAO extends DAO<Ticket, Long> {
 	public List<Ticket> findAll () {
 		return super.findAll(Ticket.class);
 	}
+
+	@Override
+	public Ticket getRandom () {
+		return super.getRandom(Ticket.class);
+	}
 }
