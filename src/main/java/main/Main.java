@@ -362,6 +362,10 @@ public class Main {
 	// ADMIN MENU
 
 	public void adminMenu () {
-
+		/*
+		* 1. n ticket, subscription by time and dispencer
+		* 2. get all ticket by means of transport or time
+		* 3. average real travel time by means of transport and routes
+		* */
 	}
 }
