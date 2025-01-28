@@ -28,6 +28,11 @@ public class SubscriptionDAO extends DAO<Subscription, Long> {
 		return super.findAll(Subscription.class);
 	}
 
+	@Override
+	public Subscription getRandom () {
+		return super.getRandom(Subscription.class);
+	}
+
 	public boolean hasSubscription (String user) {
 		super.entityManager.getTransaction().begin();
 		List<Subscription> subscriptions = super.entityManager.createQuery("""

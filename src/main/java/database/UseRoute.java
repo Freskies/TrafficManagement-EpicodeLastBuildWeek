@@ -1,6 +1,7 @@
 package database;
 
 import jakarta.persistence.*;
+import org.postgresql.util.PGInterval;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -21,7 +22,7 @@ public class UseRoute {
 	private Route route;
 
 	@Column (name = "real_travel_time")
-	private String realTravelTime;
+	private PGInterval realTravelTime;
 
 	@Column (name = "date")
 	private LocalDate date;
@@ -50,11 +51,11 @@ public class UseRoute {
 		this.route = route;
 	}
 
-	public String getRealTravelTime () {
+	public PGInterval getRealTravelTime () {
 		return this.realTravelTime;
 	}
 
-	public void setRealTravelTime (String realTravelTime) {
+	public void setRealTravelTime (PGInterval realTravelTime) {
 		this.realTravelTime = realTravelTime;
 	}
 
@@ -70,7 +71,7 @@ public class UseRoute {
 
 	}
 
-	public UseRoute (MeansOfTransport meansOfTransport, Route route, String realTravelTime, LocalDate date) {
+	public UseRoute (MeansOfTransport meansOfTransport, Route route, PGInterval realTravelTime, LocalDate date) {
 		this.setMeansOfTransport(meansOfTransport);
 		this.setRoute(route);
 		this.setRealTravelTime(realTravelTime);

@@ -28,6 +28,11 @@ public class CardDao extends DAO<Card, Long> {
 		return super.findAll(Card.class);
 	}
 
+	@Override
+	public Card getRandom () {
+		return super.getRandom(Card.class);
+	}
+
 	public Card getLastCard (String owner) {
 		this.entityManager.getTransaction().begin();
 		List<Card> cards = this.entityManager.createQuery("""

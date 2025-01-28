@@ -26,4 +26,9 @@ public class MaintenanceDAO extends DAO<Maintenance, Long> {
 	public List<Maintenance> findAll () {
 		return super.findAll(Maintenance.class);
 	}
+
+	@Override
+	public Maintenance getRandom () {
+		return super.getRandom(Maintenance.class);
+	}
 }

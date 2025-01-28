@@ -57,4 +57,12 @@ public abstract class DAO<T, IdType> {
 			return null;
 		}
 	}
+
+	public abstract T getRandom ();
+
+	protected T getRandom (Class<T> tClass) {
+		List<T> list = this.findAll(tClass);
+		if (list == null || list.isEmpty()) return null;
+		return list.get((int) (Math.random() * list.size()));
+	}
 }
