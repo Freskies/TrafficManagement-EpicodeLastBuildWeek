@@ -392,7 +392,9 @@ public class Main {
 			this.scanDate("Insert end date")
 		);
 		res.forEach(
-			(date, tickets) -> System.out.println(date + ": " + tickets.size()));
+			(date, tickets) ->
+				System.out.println(date + ": " + tickets.size())
+		);
 	}
 
 	public void getTicketsByDispenser () {

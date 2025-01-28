@@ -38,7 +38,12 @@ public class TicketDAO extends DAO<Ticket, Long> {
 	}
 
 	public HashMap<LocalDate, List<Ticket>> getTicketsByDays (LocalDate startDate, LocalDate endDate) {
-		List<Ticket> tickets = this.findAll().stream().filter(Ticket::isObliterated).toList();
+		List<Ticket> tickets = this.findAll().stream()
+			.filter(Ticket::isObliterated)
+			.filter(ticket ->
+				ticket.getUsedRoute().getDate().isAfter(startDate) &&
+					ticket.getUsedRoute().getDate().isBefore(endDate))
+			.toList();
 		return tickets.stream().collect(Collectors.toMap(
 			ticket -> ticket.getUsedRoute().getDate(),
 			ticket -> List.of(new Ticket[] {ticket}),
