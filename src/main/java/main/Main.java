@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -435,7 +436,7 @@ public class Main {
 		String date = this.scan();
 		try {
 			return LocalDate.parse(date);
-		} catch (Exception e) {
+		} catch (DateTimeParseException e) {
 			System.out.println("Invalid date format");
 			return this.scanDate(ask);
 		}
