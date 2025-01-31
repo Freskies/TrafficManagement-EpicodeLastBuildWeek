@@ -19,7 +19,7 @@ public class TicketStatisticsDAO {
     @Transactional
     public List<TicketStatistics> getTicketStatistics(LocalDate startDate, LocalDate endDate) {
         String hql = """
-                    SELECT new database.TicketStatistics(
+                    SELECT new statistics.TicketStatistics(
                         t.releaseDate,
                         COUNT(t.releaseDate)
                     )
@@ -36,9 +36,9 @@ public class TicketStatisticsDAO {
                 """;
 
         return entityManager.createQuery(hql, TicketStatistics.class)
-           .setParameter("startDate", startDate)
-           .setParameter("endDate", endDate)
-           .getResultList();
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .getResultList();
     }
 
     public static void main(String[] args) {
